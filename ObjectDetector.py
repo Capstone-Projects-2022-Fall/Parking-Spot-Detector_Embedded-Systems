@@ -21,7 +21,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       base_options=base_options, detection_options=detection_options)
     detector = vision.ObjectDetector.create_from_options(options)
 
-    input_path = r'input/tftest.png'
+    input_path = r'input/tftest1.png'
     image = cv2.imread(input_path)
 
     # Convert the image from BGR to RGB as required by the TFLite model.
