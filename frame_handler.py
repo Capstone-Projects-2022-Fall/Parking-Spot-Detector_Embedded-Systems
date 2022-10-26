@@ -1,5 +1,4 @@
 import cv2
-from PIL import ImageGrab
 import numpy as np
 
 input_source_list = ['picture', 'video', 'camera_feed', 'camera_capture']
@@ -72,23 +71,24 @@ def load_frame(source_num):
         while(cap.isOpened()):
             # Capture frame-by-frame
             ret, frame = cap.read()
-            grey_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            prepared_frame = cv2.GaussianBlur(src=grey_frame, ksize=(5,5), sigmaX=0)
-            frame_count+=1
+            
 
-            if (previous_frame is None):
+            if ret == True: 
+                grey_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                prepared_frame = cv2.GaussianBlur(src=grey_frame, ksize=(5,5), sigmaX=0)
+                frame_count+=1
+
+                if (previous_frame is None):
+                    previous_frame = prepared_frame
+                    continue  
+                diff_frame = cv2.absdiff(src1=previous_frame, src2=prepared_frame)
                 previous_frame = prepared_frame
-                continue  
-            diff_frame = cv2.absdiff(src1=previous_frame, src2=prepared_frame)
-            previous_frame = prepared_frame
-            kernel = np.ones((5, 5))
-            diff_frame = cv2.dilate(diff_frame, kernel, 1)
-            thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
-            contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
-            contoured_frame = frame.copy()
-            cv2.drawContours(image=contoured_frame, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
-
-            if ret == True:        
+                kernel = np.ones((5, 5))
+                diff_frame = cv2.dilate(diff_frame, kernel, 1)
+                thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
+                contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
+                contoured_frame = frame.copy()
+                cv2.drawContours(image=contoured_frame, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)       
                 cv2.imshow('Original Frame',frame) 
                 # cv2.imshow('Grey Frame', grey_frame)
                 # cv2.imshow('Gaussian Frame', prepared_frame)
@@ -106,40 +106,42 @@ def load_frame(source_num):
         cv2.destroyAllWindows()
     
     #feed from webcam
-    elif input == input_source_list[3]:
+    elif input == input_source_list[2]:
         cap = cv2.VideoCapture(0)
         previous_frame = None
         while True:
             ret, frame = cap.read()
-
-            grey_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            prepared_frame = cv2.GaussianBlur(src=grey_frame, ksize=(5,5), sigmaX=0)
-            if (previous_frame is None):
+            if ret == True:
+                grey_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                prepared_frame = cv2.GaussianBlur(src=grey_frame, ksize=(5,5), sigmaX=0)
+                if (previous_frame is None):
+                    previous_frame = prepared_frame
+                    continue  
+                diff_frame = cv2.absdiff(src1=previous_frame, src2=prepared_frame)
                 previous_frame = prepared_frame
-                continue  
-            diff_frame = cv2.absdiff(src1=previous_frame, src2=prepared_frame)
-            previous_frame = prepared_frame
-            kernel = np.ones((5, 5))
-            diff_frame = cv2.dilate(diff_frame, kernel, 1)
-            thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
-            contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
-            contoured_frame = frame.copy()
-            cv2.drawContours(image=contoured_frame, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+                kernel = np.ones((5, 5))
+                diff_frame = cv2.dilate(diff_frame, kernel, 1)
+                thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
+                contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
+                contoured_frame = frame.copy()
+                cv2.drawContours(image=contoured_frame, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
 
-            cv2.imshow('PSD frame from camera', frame)
-            cv2.imshow('Difference between frames tracking', thresh_frame)
-            cv2.imshow('PSD frame from camera after contouring', contoured_frame)
-        # press escape to exit
-            if (cv2.waitKey(30) == 27):
+                cv2.imshow('PSD frame from camera', frame)
+                cv2.imshow('PSD Movement between frames tracking', thresh_frame)
+                cv2.imshow('PSD frame from camera after contouring', contoured_frame)
+            # press escape to exit
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
+            else:
                 break
         cap.release()
     else:
-        print("No data source is selected.")
-#1- image
-#2- video
-#3- webcam
+        print("No data source is selected. Please select a data source to continue.")
+#0- image
+#1- video
+#2- webcam
 
-load_frame(3)   
+load_frame(2)   
 
 
 
