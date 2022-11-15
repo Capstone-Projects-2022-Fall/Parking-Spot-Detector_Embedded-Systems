@@ -1,0 +1,13 @@
+# server_address: http://parkingspotdetector-env.eba-mmwgffbe.us-east-1.elasticbeanstalk.com/
+server_address: http://192.168.1.156:3000
+camera_id: 635efd843379d80543dae0ca
+mask_uri: ./res/mask.png
+vector_uri: ./res/vectors.png
+test_input_frame: ./res/test.jpg
+gps:
+  lat: 3295482538952
+  long: 2358390582305
+mpp: 0.025
+num_consumer_threads: 1
+yolact_bin_uri: fosfos
+
