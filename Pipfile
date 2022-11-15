@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+opencv-python = "==4.6.0.66"
+imutils = "*"
+tensorflow = "*"
+scikit-image = "*"
+pillow = "*"
+pixellib = "*"
+pycocotools = "*"
+torch = "*"
+mrcnn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
