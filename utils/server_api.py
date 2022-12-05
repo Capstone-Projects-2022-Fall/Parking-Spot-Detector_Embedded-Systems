@@ -12,14 +12,14 @@ CAMERA_ID=get_config()["camera_id"]
 def send_frame(frame_file, frame_data={}):
     print("sending frame " + frame_file.name)
     METHOD="POST"
-    PATH="/frames"
+    PATH="/frames/"+CAMERA_ID+"/"
     URL = urljoin(DOMAIN, PATH)
-    params = {"camera_id": CAMERA_ID}
+    #params = {"camera_id": CAMERA_ID}
     data = {"datetime": "sample", "bytes": 1999, "camera_id": CAMERA_ID}
     files = {"frame": frame_file}
 
-    res = requests.post(URL, params=params, files=files)
-
+    res = requests.post(URL, files=files)
+    print("frame sent")
     print(res.ok)
 
 def update_camera_state(frame_data={}):
@@ -28,6 +28,8 @@ def update_camera_state(frame_data={}):
     PATH="/cameras/" + CAMERA_ID
     URL = urljoin(DOMAIN, PATH)
     data = frame_data
+
+    print(data)
 
     res = requests.patch(URL, json=data)
 
